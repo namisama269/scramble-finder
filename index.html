@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBLD Scramble Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>MBLD Scramble Finder</h1>
+
+    <p>BLD orientation: 
+    <input type="text" id="bldOrientation" value="" size="4">
+    away from WCA orientation
+    </p>
+
+    <p>Scrambling orientation: 
+    <input type="text" id="scramblingOrientation" value="" size="4">
+    away from WCA orientation
+    </p>
+
+    <div class="textbox-container">
+        <button class="button" id="saveButton" onclick="saveSettings()">Save Orientation / Clear Cube</button>
+    </div>
+
+    <button class="button" id="myBtn">Enter Scrambles</button>
+
+
+    <div class="container">
+        <canvas id="drawCanvas" width="1200" height="800"></canvas>
+    </div>
+
+    <table id="matchingScrambles">
+        <thead>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <div id="myModal" class="modal">
+
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Enter scrambles (1 on each line):</p>
+        <textarea id="multiLineInput" rows="10" style="width: 100%;"></textarea>
+        <br><br>
+        <button class="button" id="submitBtn">Submit</button>
+    </div>
+
+
+    <script>
+
+    </script>
+
+    <script src="cube.js"></script>
+    <!-- <script src="solve.js"></script> -->
+    <!-- <script src="comms.js"></script> -->
+    <!-- <script src="alg_jison.js"></script>
+    <script src="alg.js"></script> -->
+    <script src="helpers.js"></script>
+    <script src="colors.js"></script>
+    <!-- <script src="bldAlgs.js"></script> -->
+    <!-- <script src="mbldCube.js"></script> -->
+    <script src="visualCube.js"></script>
+    <script src="drawCanvas.js"></script>
+    <!-- <script src="gen.js"></script> -->
+    <!-- <script src="letterScheme.js"></script> -->
+    <script src="main.js"></script>
+</body>
+</html>
