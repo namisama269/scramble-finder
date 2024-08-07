@@ -318,7 +318,7 @@ function orient(cube, u, f) {
 
 function removeScrambleSeparator(str) {
     // Split the string by ')' or ':'
-    const parts = str.split(/[):]/);
+    const parts = str.split(/[):.]/);
     const lastSegment = parts.length > 1 ? parts[parts.length - 1].trim() : str.trim(); 
     return lastSegment;
 }
