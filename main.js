@@ -5,8 +5,71 @@ const ctx = canvas.getContext('2d');
 const cubeCanvas = document.getElementById('cubeCanvas');
 const cubeCtx = canvas.getContext('2d');
 
+function isPointInsideShape(points, mouseX, mouseY) {
+    let inside = false;
+    const n = points.length / 2;
 
-let vc = new VisualCube(1200, 1200, 360, -0.523598, -0.209439, 0, 3, 0.08);
+    for (let i = 0, j = n - 1; i < n; j = i++) {
+        const xi = points[2 * i], yi = points[2 * i + 1];
+        const xj = points[2 * j], yj = points[2 * j + 1];
+        const intersect = ((yi > mouseY) !== (yj > mouseY)) &&
+            (mouseX < (xj - xi) * (mouseY - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+}
+
+function orient(cube, u, f) {
+    for (let i = 0; i < 4; ++i) {
+        if (cube.asString()[4] == u) {
+            break;
+        }
+        cube.move("x");
+    }
+
+    for (let i = 0; i < 4; ++i) {
+        if (cube.asString()[4] == u) {
+            break;
+        }
+        cube.move("z");
+    }
+
+    for (let i = 0; i < 4; ++i) {
+        if (cube.asString()[22] == f) {
+            break;
+        }
+        cube.move("y");
+    }
+}
+
+function removeScrambleSeparator(str) {
+    const parts = str.split(/[):.]/);
+    const lastSegment = parts.length > 1 ? parts[parts.length - 1].trim() : str.trim(); 
+    return lastSegment;
+}
+
+function fixScramble(scramble) {
+    scramble = scramble.replace("Uw", "u");
+    scramble = scramble.replace("Dw", "d");
+    scramble = scramble.replace("Fw", "f");
+    scramble = scramble.replace("Bw", "b");
+    scramble = scramble.replace("Lw", "l");
+    scramble = scramble.replace("Rw", "r");
+
+    scramble = removeScrambleSeparator(scramble);
+
+    return scramble;
+}
+
+function isOrientedCubeStringMatching(cubeString1, cubeString2) {
+    for (let i = 0; i < 54; ++i) {
+        if (cubeString1[i] !== 'x' && cubeString2[i] !== 'x' && cubeString1[i] !== cubeString2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 
 let bldOrientation = "";
 let scramblingOrientation = "";
@@ -275,15 +338,7 @@ function addRows(rowsToInsert) {
         const newRow = tableBody.insertRow();
         const cell = newRow.insertCell();
         cell.textContent = rowText;
-
-        // Add hover and click event listeners to the row
-        newRow.addEventListener('mouseenter', function() {
-            newRow.style.backgroundColor = '#e0e0e0';
-        });
-
-        newRow.addEventListener('mouseleave', function() {
-            newRow.style.backgroundColor = '#f0f0f0';
-        });
+        newRow.classList.add('clickable-row');
 
         // display the scramble
         newRow.addEventListener('click', function() {
@@ -335,28 +390,57 @@ canvas.addEventListener('click', handleDrawCanvasClick);
 
 var modal = document.getElementById("myModal");
 var btn = document.getElementById("myBtn");
-var span = document.getElementsByClassName("close")[0];
 var submitBtn = document.getElementById("submitBtn");
+var howToModal = document.getElementById("howToModal");
+var howToBtn = document.getElementById("howToBtn");
+var bootstrapModalInstance = null;
+var bootstrapHowToModalInstance = null;
 
-btn.onclick = function() {
-    modal.style.display = "block";
+if (modal && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+    bootstrapModalInstance = new bootstrap.Modal(modal);
 }
-span.onclick = function() {
-    modal.style.display = "none";
-}
-submitBtn.onclick = function() {
-    var text = document.getElementById("multiLineInput").value;
-    text = text.replace(/^\s+|\s+$/g, ""); // strip newlines
-    let scrambles = text.split("\n").filter(x => x !== "");
 
-    alert("Entered " + scrambles.length + " scrambles");
-    initDrawCanvasStickers();
-    findMatchingScrambles();
-    modal.style.display = "none";
+if (howToModal && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+    bootstrapHowToModalInstance = new bootstrap.Modal(howToModal);
 }
-window.onclick = function(event) {
-    if (event.target == modal) {
+
+function showScrambleModal() {
+    if (bootstrapModalInstance) {
+        bootstrapModalInstance.show();
+    } else if (modal) {
+        modal.style.display = "block";
+    }
+}
+
+function hideScrambleModal() {
+    if (bootstrapModalInstance) {
+        bootstrapModalInstance.hide();
+    } else if (modal) {
         modal.style.display = "none";
     }
 }
 
+if (btn) {
+    btn.addEventListener('click', showScrambleModal);
+}
+
+if (howToBtn) {
+    howToBtn.addEventListener('click', function() {
+        if (bootstrapHowToModalInstance) {
+            bootstrapHowToModalInstance.show();
+        }
+    });
+}
+
+if (submitBtn) {
+    submitBtn.addEventListener('click', function() {
+        var text = document.getElementById("multiLineInput").value;
+        text = text.replace(/^\s+|\s+$/g, ""); // strip newlines
+        let scrambles = text.split("\n").filter(x => x !== "");
+    
+        alert("Entered " + scrambles.length + " scrambles");
+        initDrawCanvasStickers();
+        findMatchingScrambles();
+        hideScrambleModal();
+    });
+}

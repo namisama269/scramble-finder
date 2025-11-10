@@ -1,90 +1,51 @@
+body {
+    min-height: 100vh;
+}
+
+.navbar {
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.navbar .btn-bar {
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+    background-color: transparent;
+}
+
+.navbar .btn-bar:hover,
+.navbar .btn-bar:focus {
+    color: var(--bs-body-bg);
+    background-color: var(--bs-border-color);
+    border-color: var(--bs-border-color);
+}
+
+.navbar .btn-bar:active {
+    color: var(--bs-body-bg);
+    background-color: var(--bs-border-color);
+    border-color: var(--bs-border-color);
+}
+
 canvas {
-    /* background-color: #b5b5b5;  */
-    border: 1px solid black;
-    /* width: 360px; */
+    border: 1px solid var(--bs-border-color);
     display: inline-block;
+    max-width: 100%;
+    height: auto;
 }
 
 #cubeCanvas {
-    width: 400px; /* Set the width to 400 pixels */
-    height: auto; /* Automatically adjust height to maintain aspect ratio */
+    width: 400px;
+    height: auto;
 }
 
-.button {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 18px;
-    padding: 10px 20px;
-    background-color: #4570de;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Modal container */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
+.canvas-wrapper {
     width: 100%;
-    height: 100%;
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    overflow-x: auto;
 }
 
-/* Modal content */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 400px;
-}
-
-/* Close button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Textarea */
 textarea {
-    /* width: 100%;
-    height: 150px;  */
     resize: vertical;
-    /* overflow: auto; */
 }
 
-/* Basic styling for the table */
-table {
-    width: 1000;
-    border-collapse: collapse;
-}
-/* Styling for table rows */
-tr {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-}
-/* Hover effect */
-tr:hover {
-    background-color: #e0e0e0;
-}
-/* Styling for table cells */
-td {
-    padding: 10px;
-    text-align: left;
+.clickable-row {
+    cursor: pointer;
 }
