@@ -36,12 +36,14 @@
                         <h2 class="h5 mb-4">Settings</h2>
                         <form class="orientation-form">
                             <div class="orientation-field">
-                                <label for="bldOrientation" class="form-label">BLD orientation (away from WCA)</label>
-                                <input type="text" id="bldOrientation" class="form-control" maxlength="4">
+                                <label for="bldOrientationSelect" class="form-label">BLD orientation (away from WCA)</label>
+                                <input type="hidden" id="bldOrientation">
+                                <select id="bldOrientationSelect" class="form-select"></select>
                             </div>
                             <div class="orientation-field">
-                                <label for="scramblingOrientation" class="form-label">Scrambling orientation (away from WCA)</label>
-                                <input type="text" id="scramblingOrientation" class="form-control" maxlength="4">
+                                <label for="scramblingOrientationSelect" class="form-label">Scrambling orientation (away from WCA)</label>
+                                <input type="hidden" id="scramblingOrientation">
+                                <select id="scramblingOrientationSelect" class="form-select"></select>
                             </div>
                             <div class="orientation-actions">
                                 <button type="button" class="btn btn-primary" id="saveButton" onclick="saveSettings()">Save Orientation / Clear Cube</button>

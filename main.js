@@ -84,6 +84,143 @@ function isOrientedCubeStringMatching(cubeString1, cubeString2) {
     return true;
 }
 
+const ORIENTATION_OPTIONS = {
+    "wg": "White(top) - Green(front)",
+    "wr": "White(top) - Red(front)",
+    "wb": "White(top) - Blue(front)",
+    "wo": "White(top) - Orange(front)",
+    "yg": "Yellow(top) - Green(front)",
+    "yr": "Yellow(top) - Red(front)",
+    "yb": "Yellow(top) - Blue(front)",
+    "yo": "Yellow(top) - Orange(front)",
+    "ob": "Orange(top) - Blue(front)",
+    "ow": "Orange(top) - White(front)",
+    "oy": "Orange(top) - Yellow(front)",
+    "og": "Orange(top) - Green(front)",
+    "rb": "Red(top) - Blue(front)",
+    "rw": "Red(top) - White(front)",
+    "ry": "Red(top) - Yellow(front)",
+    "rg": "Red(top) - Green(front)",
+    "go": "Green(top) - Orange(front)",
+    "gy": "Green(top) - Yellow(front)",
+    "gw": "Green(top) - White(front)",
+    "gr": "Green(top) - Red(front)",
+    "bo": "Blue(top) - Orange(front)",
+    "by": "Blue(top) - Yellow(front)",
+    "bw": "Blue(top) - White(front)",
+    "br": "Blue(top) - Red(front)"
+};
+
+const ORIENTATION_MOVES = {
+    "wg": "",
+    "wr": "y",
+    "wb": "y2",
+    "wo": "y'",
+    "yg": "z2",
+    "yr": "x2 y",
+    "yb": "x2",
+    "yo": "x2 y'",
+    "ob": "z y2",
+    "ow": "z y",
+    "oy": "z y'",
+    "og": "z",
+    "rb": "z' y2",
+    "rw": "z' y'",
+    "ry": "z' y",
+    "rg": "z'",
+    "go": "x y'",
+    "gy": "x",
+    "gw": "x y2",
+    "gr": "x y",
+    "bo": "x' y'",
+    "by": "x' y2",
+    "bw": "x'",
+    "br": "x' y"
+};
+
+const ORIENTATION_CONTROL_CONFIG = {
+    bld: {
+        selectId: 'bldOrientationSelect',
+        hiddenInputId: 'bldOrientation',
+        keyStorage: 'bldOrientationKey'
+    },
+    scrambling: {
+        selectId: 'scramblingOrientationSelect',
+        hiddenInputId: 'scramblingOrientation',
+        keyStorage: 'scramblingOrientationKey'
+    }
+};
+
+function initializeOrientationControls() {
+    Object.keys(ORIENTATION_CONTROL_CONFIG).forEach((type) => {
+        const config = ORIENTATION_CONTROL_CONFIG[type];
+        populateOrientationSelect(type);
+
+        const selectEl = document.getElementById(config.selectId);
+        if (selectEl) {
+            selectEl.addEventListener('change', (event) => {
+                handleOrientationSelection(type, event.target.value);
+            });
+        }
+    });
+}
+
+function populateOrientationSelect(type) {
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    if (!config) {
+        return;
+    }
+
+    const selectEl = document.getElementById(config.selectId);
+    if (!selectEl) {
+        return;
+    }
+
+    selectEl.innerHTML = '';
+
+    Object.entries(ORIENTATION_OPTIONS).forEach(([key, label]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = label;
+        selectEl.appendChild(option);
+    });
+
+    let savedKey = localStorage.getItem(config.keyStorage);
+    if (!savedKey) {
+        savedKey = 'wg';
+        localStorage.setItem(config.keyStorage, savedKey);
+    }
+
+    selectEl.value = savedKey;
+    handleOrientationSelection(type, savedKey);
+}
+
+function handleOrientationSelection(type, key) {
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    if (!config) {
+        return;
+    }
+
+    const hiddenInput = document.getElementById(config.hiddenInputId);
+
+    localStorage.setItem(config.keyStorage, key);
+
+    if (hiddenInput) {
+        hiddenInput.value = ORIENTATION_MOVES[key] || '';
+    }
+
+    if (type === 'bld') {
+        bldOrientation = hiddenInput ? hiddenInput.value : "";
+        localStorage.setItem('bldOrientation', bldOrientation);
+        setOrientation();
+        initDrawCanvasStickers();
+    } else if (type === 'scrambling') {
+        scramblingOrientation = hiddenInput ? hiddenInput.value : "";
+        localStorage.setItem('scramblingOrientation', scramblingOrientation);
+        findMatchingScrambles();
+    }
+}
+
 let bldOrientation = "";
 let scramblingOrientation = "";
 let identityCube = new Cube();
@@ -117,19 +254,10 @@ function setOrientation() {
 }
 
 function loadSettings() {
-    let savedValue = localStorage.getItem("bldOrientation");
-    if (savedValue !== null) {
-        bldOrientation = savedValue;
-    }
-
-    savedValue = localStorage.getItem("scramblingOrientation");
-    if (savedValue !== null) {
-        scramblingOrientation = savedValue;
-    }
-
-    document.getElementById('bldOrientation').value = bldOrientation;
-    document.getElementById('scramblingOrientation').value = scramblingOrientation;
-
+    const bldInput = document.getElementById('bldOrientation');
+    const scramblingInput = document.getElementById('scramblingOrientation');
+    bldOrientation = bldInput ? bldInput.value : "";
+    scramblingOrientation = scramblingInput ? scramblingInput.value : "";
     setOrientation();
 }
 
@@ -145,6 +273,7 @@ function saveSettings() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    initializeOrientationControls();
     loadSettings();
     initDrawCanvasStickers();
 });
