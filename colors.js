@@ -16,5 +16,5 @@ const STICKER_COLORS = {
     "F": GREEN,
     "B": BLUE,
     "z": BLACK,
-    "x": "#A0A0A0",
+    "x": "#86868eff",
 }

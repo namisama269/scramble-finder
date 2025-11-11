@@ -6,6 +6,24 @@ body {
     border-bottom: 1px solid var(--bs-border-color);
 }
 
+.orientation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.0rem;
+}
+
+.orientation-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.orientation-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
 .navbar .btn-bar {
     color: var(--bs-body-color);
     border-color: var(--bs-border-color);
@@ -26,7 +44,6 @@ body {
 }
 
 canvas {
-    border: 1px solid var(--bs-border-color);
     display: inline-block;
     max-width: 100%;
     height: auto;
@@ -40,6 +57,8 @@ canvas {
 .canvas-wrapper {
     width: 100%;
     overflow-x: auto;
+    display: flex;
+    justify-content: center;
 }
 
 textarea {

@@ -13,8 +13,9 @@
         <div class="container py-2">
             <span class="navbar-brand fw-semibold mb-0 h1">MBLD Scramble Finder</span>
             <div class="d-flex align-items-center gap-3 ms-auto">
-                <a class="btn btn-bar" href="https://github.com/namisama269/scramble-finder" target="_blank" rel="noopener" aria-label="View on GitHub">
+                <a class="btn btn-bar d-flex align-items-center gap-2" href="https://github.com/namisama269/scramble-finder" target="_blank" rel="noopener" aria-label="View on GitHub">
                     <i class="bi bi-github"></i>
+                    <span>GitHub</span>
                 </a>
                 <button type="button" class="btn btn-bar" id="howToBtn">
                     How to use
@@ -32,17 +33,17 @@
             <div class="col-lg-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
-                        <h2 class="h5 mb-4">Orientation Settings</h2>
-                        <form class="row g-3">
-                            <div class="col-12">
+                        <h2 class="h5 mb-4">Settings</h2>
+                        <form class="orientation-form">
+                            <div class="orientation-field">
                                 <label for="bldOrientation" class="form-label">BLD orientation (away from WCA)</label>
                                 <input type="text" id="bldOrientation" class="form-control" maxlength="4">
                             </div>
-                            <div class="col-12">
+                            <div class="orientation-field">
                                 <label for="scramblingOrientation" class="form-label">Scrambling orientation (away from WCA)</label>
                                 <input type="text" id="scramblingOrientation" class="form-control" maxlength="4">
                             </div>
-                            <div class="col-12 d-flex flex-wrap gap-2">
+                            <div class="orientation-actions">
                                 <button type="button" class="btn btn-primary" id="saveButton" onclick="saveSettings()">Save Orientation / Clear Cube</button>
                                 <button type="button" class="btn btn-primary" id="myBtn">Enter Scrambles</button>
                             </div>
@@ -100,7 +101,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="howToModalLabel">How to use MBLD Scramble Finder</h1>
+                    <h1 class="modal-title fs-5" id="howToModalLabel">How to Use MBLD Scramble Finder</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

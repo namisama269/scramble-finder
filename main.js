@@ -43,10 +43,23 @@ function orient(cube, u, f) {
     }
 }
 
+/**
+ * removeScrambleSeparator trims numbering prefixes that often precede scrambles
+ * when they are copied from lists. It strips patterns like "1.", "1)", "(1)",
+ * and any trailing whitespace or colon so the returned string starts directly
+ * with the scramble moves.
+ */
 function removeScrambleSeparator(str) {
-    const parts = str.split(/[):.]/);
-    const lastSegment = parts.length > 1 ? parts[parts.length - 1].trim() : str.trim(); 
-    return lastSegment;
+    let cleaned = str.trim();
+
+    // Remove leading numbering like "1.", "1)" or "(1)"
+    const prefixPattern = /^(?:\(\d+\)|\d+[.)]?)/;
+    if (prefixPattern.test(cleaned)) {
+        // Drop the detected prefix plus any trailing whitespace or colon
+        cleaned = cleaned.replace(/^(?:\(\d+\)|\d+[.)]?)[\s:]*/, '');
+    }
+
+    return cleaned.trim();
 }
 
 function fixScramble(scramble) {
@@ -334,17 +347,20 @@ function addRows(rowsToInsert) {
     const tableBody = document.querySelector('#matchingScrambles tbody');
     tableBody.innerHTML = '';
     
-    rowsToInsert.forEach(rowText => {
+    rowsToInsert.forEach(rowData => {
+        const displayText = typeof rowData === 'string' ? rowData : rowData.display;
+        const normalizedScramble = typeof rowData === 'string' ? fixScramble(rowData) : rowData.normalized;
+
         const newRow = tableBody.insertRow();
         const cell = newRow.insertCell();
-        cell.textContent = rowText;
+        cell.textContent = displayText;
         newRow.classList.add('clickable-row');
 
         // display the scramble
         newRow.addEventListener('click', function() {
             initDrawCanvasStickers();
 
-            let scramble = fixScramble(rowText);
+            let scramble = normalizedScramble;
             let scrambleCube = new Cube();
             console.log(scramble);
             scrambleCube.move(scramblingOrientation);
@@ -366,11 +382,12 @@ function addRows(rowsToInsert) {
 function findMatchingScrambles() {
     var text = document.getElementById("multiLineInput").value;
     text = text.replace(/^\s+|\s+$/g, ""); // strip newlines
-    let scrambles = text.split("\n").filter(x => x !== "");
+    let scrambles = text.split("\n").map(s => s.trim()).filter(x => x !== "");
     let matchingScrambles = [];
 
     for (let i = 0; i < scrambles.length; ++i) {
-        let scramble = fixScramble(scrambles[i]);
+        const rawScramble = scrambles[i];
+        let scramble = fixScramble(rawScramble);
 
         let scrambleCube = new Cube();
         scrambleCube.move(scramblingOrientation);
@@ -379,7 +396,10 @@ function findMatchingScrambles() {
         orient(scrambleCube, drawCanvasString[4], drawCanvasString[22]);
 
         if (isOrientedCubeStringMatching(scrambleCube.asString(), drawCanvasString)) {
-            matchingScrambles.push(scrambles[i]);
+            matchingScrambles.push({
+                display: rawScramble,
+                normalized: scramble
+            });
         }
     }
 
