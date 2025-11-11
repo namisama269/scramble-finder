@@ -36,14 +36,26 @@
                         <h2 class="h5 mb-4">Settings</h2>
                         <form class="orientation-form">
                             <div class="orientation-field">
-                                <label for="bldOrientationSelect" class="form-label">BLD orientation (away from WCA)</label>
+                                <label for="bldOrientationToggle" class="form-label">BLD orientation (away from WCA)</label>
                                 <input type="hidden" id="bldOrientation">
-                                <select id="bldOrientationSelect" class="form-select"></select>
+                                <div class="orientation-dropdown">
+                                    <button type="button" class="btn btn-outline-secondary orientation-dropdown-toggle" id="bldOrientationToggle" aria-haspopup="listbox" aria-expanded="false">
+                                        <span class="orientation-dropdown-label">Select orientation</span>
+                                        <i class="bi bi-chevron-down orientation-dropdown-caret"></i>
+                                    </button>
+                                    <ul class="orientation-dropdown-menu" id="bldOrientationMenu" role="listbox"></ul>
+                                </div>
                             </div>
                             <div class="orientation-field">
-                                <label for="scramblingOrientationSelect" class="form-label">Scrambling orientation (away from WCA)</label>
+                                <label for="scramblingOrientationToggle" class="form-label">Scrambling orientation (away from WCA)</label>
                                 <input type="hidden" id="scramblingOrientation">
-                                <select id="scramblingOrientationSelect" class="form-select"></select>
+                                <div class="orientation-dropdown">
+                                    <button type="button" class="btn btn-outline-secondary orientation-dropdown-toggle" id="scramblingOrientationToggle" aria-haspopup="listbox" aria-expanded="false">
+                                        <span class="orientation-dropdown-label">Select orientation</span>
+                                        <i class="bi bi-chevron-down orientation-dropdown-caret"></i>
+                                    </button>
+                                    <ul class="orientation-dropdown-menu" id="scramblingOrientationMenu" role="listbox"></ul>
+                                </div>
                             </div>
                             <div class="orientation-actions">
                                 <button type="button" class="btn btn-primary" id="saveButton" onclick="saveSettings()">Save Orientation / Clear Cube</button>

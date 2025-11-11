@@ -85,30 +85,30 @@ function isOrientedCubeStringMatching(cubeString1, cubeString2) {
 }
 
 const ORIENTATION_OPTIONS = {
-    "wg": "White(top) - Green(front)",
-    "wr": "White(top) - Red(front)",
-    "wb": "White(top) - Blue(front)",
-    "wo": "White(top) - Orange(front)",
-    "yg": "Yellow(top) - Green(front)",
-    "yr": "Yellow(top) - Red(front)",
-    "yb": "Yellow(top) - Blue(front)",
-    "yo": "Yellow(top) - Orange(front)",
-    "ob": "Orange(top) - Blue(front)",
-    "ow": "Orange(top) - White(front)",
-    "oy": "Orange(top) - Yellow(front)",
-    "og": "Orange(top) - Green(front)",
-    "rb": "Red(top) - Blue(front)",
-    "rw": "Red(top) - White(front)",
-    "ry": "Red(top) - Yellow(front)",
-    "rg": "Red(top) - Green(front)",
-    "go": "Green(top) - Orange(front)",
-    "gy": "Green(top) - Yellow(front)",
-    "gw": "Green(top) - White(front)",
-    "gr": "Green(top) - Red(front)",
-    "bo": "Blue(top) - Orange(front)",
-    "by": "Blue(top) - Yellow(front)",
-    "bw": "Blue(top) - White(front)",
-    "br": "Blue(top) - Red(front)"
+    "wg": "White (top) - Green (front)",
+    "wr": "White (top) - Red (front)",
+    "wb": "White (top) - Blue (front)",
+    "wo": "White (top) - Orange (front)",
+    "yg": "Yellow (top) - Green (front)",
+    "yr": "Yellow (top) - Red (front)",
+    "yb": "Yellow (top) - Blue (front)",
+    "yo": "Yellow (top) - Orange (front)",
+    "ob": "Orange (top) - Blue (front)",
+    "ow": "Orange (top) - White (front)",
+    "oy": "Orange (top) - Yellow (front)",
+    "og": "Orange (top) - Green (front)",
+    "rb": "Red (top) - Blue (front)",
+    "rw": "Red (top) - White (front)",
+    "ry": "Red (top) - Yellow (front)",
+    "rg": "Red (top) - Green (front)",
+    "go": "Green (top) - Orange (front)",
+    "gy": "Green (top) - Yellow (front)",
+    "gw": "Green (top) - White (front)",
+    "gr": "Green (top) - Red (front)",
+    "bo": "Blue (top) - Orange (front)",
+    "by": "Blue (top) - Yellow (front)",
+    "bw": "Blue (top) - White (front)",
+    "br": "Blue (top) - Red (front)"
 };
 
 const ORIENTATION_MOVES = {
@@ -138,64 +138,110 @@ const ORIENTATION_MOVES = {
     "br": "x' y"
 };
 
+const FACE_COLORS = {
+    w: typeof WHITE !== 'undefined' ? WHITE : '#ffffff',
+    y: typeof YELLOW !== 'undefined' ? YELLOW : '#f0ff00',
+    o: typeof ORANGE !== 'undefined' ? ORANGE : '#fb8c00',
+    r: typeof RED !== 'undefined' ? RED : '#e8120a',
+    g: typeof GREEN !== 'undefined' ? GREEN : '#66ff33',
+    b: typeof BLUE !== 'undefined' ? BLUE : '#2055ff'
+};
+
 const ORIENTATION_CONTROL_CONFIG = {
     bld: {
-        selectId: 'bldOrientationSelect',
+        toggleId: 'bldOrientationToggle',
+        menuId: 'bldOrientationMenu',
         hiddenInputId: 'bldOrientation',
-        keyStorage: 'bldOrientationKey'
+        keyStorage: 'bldOrientationKey',
+        valueStorage: 'bldOrientation'
     },
     scrambling: {
-        selectId: 'scramblingOrientationSelect',
+        toggleId: 'scramblingOrientationToggle',
+        menuId: 'scramblingOrientationMenu',
         hiddenInputId: 'scramblingOrientation',
-        keyStorage: 'scramblingOrientationKey'
+        keyStorage: 'scramblingOrientationKey',
+        valueStorage: 'scramblingOrientation'
     }
 };
 
+let openOrientationMenu = null;
+
 function initializeOrientationControls() {
     Object.keys(ORIENTATION_CONTROL_CONFIG).forEach((type) => {
+        renderOrientationMenu(type);
         const config = ORIENTATION_CONTROL_CONFIG[type];
-        populateOrientationSelect(type);
-
-        const selectEl = document.getElementById(config.selectId);
-        if (selectEl) {
-            selectEl.addEventListener('change', (event) => {
-                handleOrientationSelection(type, event.target.value);
+        const toggle = document.getElementById(config.toggleId);
+        if (toggle) {
+            toggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleOrientationMenu(type);
             });
+        }
+    });
+
+    document.addEventListener('click', () => closeAllOrientationMenus());
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeAllOrientationMenus();
         }
     });
 }
 
-function populateOrientationSelect(type) {
+function renderOrientationMenu(type) {
     const config = ORIENTATION_CONTROL_CONFIG[type];
     if (!config) {
         return;
     }
 
-    const selectEl = document.getElementById(config.selectId);
-    if (!selectEl) {
+    const menu = document.getElementById(config.menuId);
+    if (!menu) {
         return;
     }
 
-    selectEl.innerHTML = '';
+    menu.innerHTML = '';
 
     Object.entries(ORIENTATION_OPTIONS).forEach(([key, label]) => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = label;
-        selectEl.appendChild(option);
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'orientation-menu-item';
+        button.dataset.value = key;
+        button.setAttribute('role', 'option');
+        button.innerHTML = getOrientationOptionHTML(key, label);
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            handleOrientationSelection(type, key);
+            closeOrientationMenu(type);
+        });
+        item.appendChild(button);
+        menu.appendChild(item);
     });
 
-    let savedKey = localStorage.getItem(config.keyStorage);
-    if (!savedKey) {
-        savedKey = 'wg';
-        localStorage.setItem(config.keyStorage, savedKey);
-    }
-
-    selectEl.value = savedKey;
-    handleOrientationSelection(type, savedKey);
+    const initialKey = getInitialOrientationKey(type);
+    handleOrientationSelection(type, initialKey, { suppressUpdates: true });
 }
 
-function handleOrientationSelection(type, key) {
+function getInitialOrientationKey(type) {
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    let savedKey = localStorage.getItem(config.keyStorage);
+    if (savedKey && ORIENTATION_OPTIONS[savedKey]) {
+        return savedKey;
+    }
+
+    const storedValue = localStorage.getItem(config.valueStorage);
+    if (storedValue) {
+        const matchedEntry = Object.entries(ORIENTATION_MOVES).find(([, moves]) => moves === storedValue);
+        if (matchedEntry) {
+            localStorage.setItem(config.keyStorage, matchedEntry[0]);
+            return matchedEntry[0];
+        }
+    }
+
+    localStorage.setItem(config.keyStorage, 'wg');
+    return 'wg';
+}
+
+function handleOrientationSelection(type, key, options = {}) {
     const config = ORIENTATION_CONTROL_CONFIG[type];
     if (!config) {
         return;
@@ -207,6 +253,14 @@ function handleOrientationSelection(type, key) {
 
     if (hiddenInput) {
         hiddenInput.value = ORIENTATION_MOVES[key] || '';
+        localStorage.setItem(config.valueStorage, hiddenInput.value);
+    }
+
+    setActiveOrientationMenuItem(type, key);
+    updateOrientationDropdownLabel(type, key);
+
+    if (options.suppressUpdates) {
+        return;
     }
 
     if (type === 'bld') {
@@ -219,6 +273,92 @@ function handleOrientationSelection(type, key) {
         localStorage.setItem('scramblingOrientation', scramblingOrientation);
         findMatchingScrambles();
     }
+}
+
+function toggleOrientationMenu(type) {
+    if (openOrientationMenu === type) {
+        closeOrientationMenu(type);
+        return;
+    }
+
+    closeAllOrientationMenus();
+
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    const menu = document.getElementById(config.menuId);
+    const toggle = document.getElementById(config.toggleId);
+    if (menu && toggle) {
+        menu.classList.add('show');
+        toggle.setAttribute('aria-expanded', 'true');
+        openOrientationMenu = type;
+    }
+}
+
+function closeOrientationMenu(type) {
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    if (!config) {
+        return;
+    }
+
+    const menu = document.getElementById(config.menuId);
+    const toggle = document.getElementById(config.toggleId);
+    if (menu) {
+        menu.classList.remove('show');
+    }
+    if (toggle) {
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+    if (openOrientationMenu === type) {
+        openOrientationMenu = null;
+    }
+}
+
+function closeAllOrientationMenus() {
+    Object.keys(ORIENTATION_CONTROL_CONFIG).forEach((type) => closeOrientationMenu(type));
+    openOrientationMenu = null;
+}
+
+function setActiveOrientationMenuItem(type, key) {
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    const menu = document.getElementById(config.menuId);
+    if (!menu) {
+        return;
+    }
+
+    menu.querySelectorAll('.orientation-menu-item').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.value === key);
+    });
+}
+
+function updateOrientationDropdownLabel(type, key) {
+    const config = ORIENTATION_CONTROL_CONFIG[type];
+    const toggle = document.getElementById(config.toggleId);
+    if (!toggle) {
+        return;
+    }
+
+    toggle.innerHTML = `
+        <span class="orientation-dropdown-label">
+            ${getOrientationOptionHTML(key, ORIENTATION_OPTIONS[key])}
+        </span>
+        <i class="bi bi-chevron-down orientation-dropdown-caret"></i>
+    `;
+}
+
+function getOrientationOptionHTML(key, label) {
+    const topColor = getFaceColor(key[0]);
+    const frontColor = getFaceColor(key[1]);
+    return `
+        <span class="orientation-swatch" aria-hidden="true">
+            <span class="orientation-swatch-face" style="background-color: ${topColor};"></span>
+            <span class="orientation-swatch-face" style="background-color: ${frontColor};"></span>
+        </span>
+        <span class="orientation-option-label">${label}</span>
+    `;
+}
+
+function getFaceColor(letter) {
+    const normalized = (letter || '').toLowerCase();
+    return FACE_COLORS[normalized] || 'var(--bs-tertiary-bg)';
 }
 
 let bldOrientation = "";
