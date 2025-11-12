@@ -534,8 +534,10 @@ function createSquareDrawCanvasStickers(tlx, tly, center) {
 
 function getMousePosition(canvas, event) {
     const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (event.clientX - rect.left) * scaleX;
+    const y = (event.clientY - rect.top) * scaleY;
     return { x: x, y: y };
 }
 
@@ -675,7 +677,30 @@ function findMatchingScrambles() {
     addRows(matchingScrambles);
 }
 
-canvas.addEventListener('click', handleDrawCanvasClick);
+canvas.addEventListener('pointerdown', handlePointerInteraction);
+canvas.addEventListener('pointermove', handlePointerInteraction);
+canvas.addEventListener('pointerup', handlePointerInteraction);
+canvas.addEventListener('pointercancel', handlePointerInteraction);
+
+function handlePointerInteraction(event) {
+    if (event.type === 'pointerdown') {
+        canvas.setPointerCapture(event.pointerId);
+        processCanvasPointer(event);
+    } else if (event.type === 'pointermove' && event.pressure > 0) {
+        processCanvasPointer(event);
+    } else if (event.type === 'pointerup' || event.type === 'pointercancel') {
+        canvas.releasePointerCapture(event.pointerId);
+    }
+}
+
+function processCanvasPointer(event) {
+    event.preventDefault();
+    const normalizedEvent = {
+        clientX: event.clientX,
+        clientY: event.clientY
+    };
+    handleDrawCanvasClick(normalizedEvent);
+}
 
 var modal = document.getElementById("myModal");
 var btn = document.getElementById("myBtn");
