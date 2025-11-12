@@ -401,15 +401,9 @@ function loadSettings() {
     setOrientation();
 }
 
-function saveSettings() {
-    bldOrientation = document.getElementById('bldOrientation').value;
-    scramblingOrientation = document.getElementById('scramblingOrientation').value;
-
-    localStorage.setItem('bldOrientation', bldOrientation);
-    localStorage.setItem('scramblingOrientation', scramblingOrientation);
-
-    setOrientation();
+function resetCubeDisplay() {
     initDrawCanvasStickers();
+    currColor = 'x';
 }
 
 document.addEventListener("DOMContentLoaded", function() {
