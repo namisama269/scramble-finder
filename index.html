@@ -58,8 +58,8 @@
                                 </div>
                             </div>
                             <div class="orientation-actions">
-                                <button type="button" class="btn btn-primary" id="clearCubeButton" onclick="resetCubeDisplay()">Clear Cube</button>
                                 <button type="button" class="btn btn-primary" id="myBtn">Enter Scrambles</button>
+                                <button type="button" class="btn btn-primary" id="clearCubeButton" onclick="resetCubeDisplay()">Clear Cube</button>
                             </div>
                         </form>
                     </div>
@@ -115,16 +115,20 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="howToModalLabel">How to Use MBLD Scramble Finder</h1>
+                    <h1 class="modal-title fs-5" id="howToModalLabel">How to use</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    MBLD Scramble Finder is a tool for finding the scramble for any cube from a multi blind attempt in order to analyze DNFs.
+                    <br><br>
+                    
                     <ol class="ps-3">
-                        <li>Set the BLD and scrambling orientations relative to WCA default, then save.</li>
-                        <li>Click stickers on the cube canvas to match the pattern you’re searching for.</li>
-                        <li>Enter scrambles through the “Enter Scrambles” button and paste one per line.</li>
-                        <li>Matching scrambles appear in the table; click one to preview it on the cube.</li>
-                        <li>Use the color selector (bottom-right square) to switch the drawing color.</li>
+                        
+                        <li>Select your BLD solving orientation and the orientation the cubes were scrambled in (white/green for official WCA competition attempts).</li>
+                        <li>Click the "Enter Scrambles" button and enter a list of scrambles, one on each line. These support the prefixes in csTimer's ScrambleGenerator: "1.", "1)" and "(1)".</li>
+                        <li>Click the center sticker of the cube to set the drawing color, click outside of the cube to reset the color to grey. The currently selected color will appear in the bottom right square.</li>
+                        <li>Click on a non-center sticker to color it in the drawing color. To reset the cube, click the "Clear Cube" button.</li>
+                        <li>All scrambles that match the current pattern will show in the "Matching Scrambles" list. Click on any of the scrambles to display it on the cube.</li>
                     </ol>
                 </div>
                 <div class="modal-footer">
